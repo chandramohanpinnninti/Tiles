@@ -1,0 +1,39 @@
+// MARK: - Home
+"home.title" = "Tiles";
+"home.empty.title" = "Start tracking anything";
+"home.empty.subtitle" = "Type \"track my water\" below to create your first tile";
+
+// MARK: - Chat
+"chat.placeholder" = "Track, log, or ask anything…";
+
+// MARK: - Tile card
+"tile.unit.format" = "%@ %@";
+
+// MARK: - Debrief preview sheet
+"debrief.nav.title" = "Review";
+"debrief.section.logging" = "Logging";
+"debrief.section.unmatched" = "No matching tile";
+"debrief.action.cancel" = "Cancel";
+"debrief.action.confirm" = "Log it";
+
+// MARK: - Measurement entry sheet
+"entry.nav.title" = "Log %@";
+"entry.field.label" = "Value";
+"entry.field.note.label" = "Note (optional)";
+"entry.action.cancel" = "Cancel";
+"entry.action.save" = "Save";
+
+// MARK: - Detail view
+"detail.section.insights" = "AI Insights";
+"detail.section.history" = "Recent entries";
+"detail.range.7d" = "7D";
+"detail.range.30d" = "30D";
+"detail.range.3m" = "3M";
+"detail.range.1y" = "1Y";
+"detail.empty.history" = "No entries yet";
+"detail.action.log" = "Log";
+
+// MARK: - Errors
+"error.title" = "Something went wrong";
+"error.action.ok" = "OK";
+"error.api.key.missing" = "Add your Claude API key in Config.swift to get started.";
