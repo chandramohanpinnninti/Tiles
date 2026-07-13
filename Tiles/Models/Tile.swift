@@ -1,86 +1,138 @@
 import SwiftData
 import Foundation
 
-enum TileType: String, Codable, CaseIterable {
+enum TrackerType: String, Codable, CaseIterable {
     case counter
     case measurement
+    case sessionLog = "session_log"
 }
 
-enum TrendDirection: String, Codable {
-    case up   // higher is better (sleep hours, workouts)
-    case down // lower is better (weight, caffeine)
-}
-
-enum ResetCadence: String, Codable {
+enum TrackerPeriod: String, Codable, CaseIterable {
     case daily
     case weekly
+    case monthly
+    case yearly
+    case never
+}
+
+enum TargetDirection: String, Codable, CaseIterable {
+    case floor
+    case ceiling
+}
+
+enum TrackerCategory: String, Codable, CaseIterable {
+    case hydration
+    case nutrition
+    case fitness
+    case body
+    case sleep
+    case mood
+    case habits
+    case substance
+    case finance
+    case health
+    case custom
 }
 
 @Model
-final class Tile {
-    var id: UUID
-    var name: String
-    var type: TileType
-    var unit: String
-    var icon: String
-    var colorHex: String
-    var goal: Double?
-    var resetCadence: ResetCadence?
-    var trendDirection: TrendDirection?
-    var createdAt: Date
-    @Relationship(deleteRule: .cascade) var entries: [TileEntry] = []
+final class Tracker {
+    var id: UUID = UUID()
+    var name: String = ""
+    var type: TrackerType = TrackerType.counter
+    var unit: String = ""
+    var period: TrackerPeriod = TrackerPeriod.daily
+    var targetValue: Double?
+    var targetDirection: TargetDirection?
+    var group: String = "My Tiles"
+    var category: TrackerCategory = TrackerCategory.custom
+    var sortOrder: Int = 0
+    var isPlaceholder: Bool = false
+    var icon: String = "circle.fill"
+    var emoji: String = ""
+    var colorHex: String = "#4A90E2"
+    var createdAt: Date = Date()
+    var archivedAt: Date?
+    @Relationship(deleteRule: .cascade, inverse: \EntryTrackerValue.tracker) var values: [EntryTrackerValue]? = []
 
     init(
         name: String,
-        type: TileType,
+        type: TrackerType,
         unit: String,
+        period: TrackerPeriod = .daily,
+        targetValue: Double? = nil,
+        targetDirection: TargetDirection? = nil,
+        group: String = "My Tiles",
+        category: TrackerCategory = .custom,
+        sortOrder: Int = 0,
+        isPlaceholder: Bool = false,
         icon: String = "circle.fill",
-        colorHex: String = "#4A90E2",
-        goal: Double? = nil,
-        resetCadence: ResetCadence? = nil,
-        trendDirection: TrendDirection? = nil
+        emoji: String = "",
+        colorHex: String = "#4A90E2"
     ) {
-        self.id = UUID()
         self.name = name
         self.type = type
         self.unit = unit
+        self.period = period
+        self.targetValue = targetValue
+        self.targetDirection = targetDirection
+        self.group = group
+        self.category = category
+        self.sortOrder = sortOrder
+        self.isPlaceholder = isPlaceholder
         self.icon = icon
+        self.emoji = emoji
         self.colorHex = colorHex
-        self.goal = goal
-        self.resetCadence = resetCadence
-        self.trendDirection = trendDirection
-        self.createdAt = Date()
     }
+}
 
-    // Value to show on the tile card
+extension Tracker {
     var displayValue: Double {
         switch type {
-        case .counter:
-            return periodEntries(for: resetCadence ?? .daily).reduce(0) { $0 + $1.value }
+        case .counter, .sessionLog:
+            return values(in: currentPeriodStart()).reduce(0) { $0 + $1.value }
         case .measurement:
-            return entries.sorted { $0.loggedAt > $1.loggedAt }.first?.value ?? 0
+            return recentValues.first?.value ?? 0
         }
     }
 
     var goalProgress: Double? {
-        guard let goal, goal > 0 else { return nil }
-        return min(displayValue / goal, 1.0)
+        guard let targetValue, targetValue > 0 else { return nil }
+        switch targetDirection ?? .floor {
+        case .floor:
+            return min(displayValue / targetValue, 1.0)
+        case .ceiling:
+            return min(max((targetValue - displayValue) / targetValue, 0), 1.0)
+        }
     }
 
-    func periodEntries(for cadence: ResetCadence) -> [TileEntry] {
+    var recentValues: [EntryTrackerValue] {
+        (values ?? [])
+            .filter { $0.entry != nil }
+            .sorted { ($0.entry?.loggedAt ?? .distantPast) > ($1.entry?.loggedAt ?? .distantPast) }
+    }
+
+    func values(in startDate: Date?) -> [EntryTrackerValue] {
+        guard let startDate else { return values ?? [] }
+        return (values ?? []).filter { value in
+            guard let loggedAt = value.entry?.loggedAt else { return false }
+            return loggedAt >= startDate
+        }
+    }
+
+    private func currentPeriodStart() -> Date? {
         let calendar = Calendar.current
         let now = Date()
-        let start: Date
-        switch cadence {
+        switch period {
         case .daily:
-            start = calendar.startOfDay(for: now)
+            return calendar.startOfDay(for: now)
         case .weekly:
-            start = calendar.dateInterval(of: .weekOfYear, for: now)?.start ?? calendar.startOfDay(for: now)
+            return calendar.dateInterval(of: .weekOfYear, for: now)?.start
+        case .monthly:
+            return calendar.dateInterval(of: .month, for: now)?.start
+        case .yearly:
+            return calendar.dateInterval(of: .year, for: now)?.start
+        case .never:
+            return nil
         }
-        return entries.filter { $0.loggedAt >= start }
-    }
-
-    var recentEntries: [TileEntry] {
-        entries.sorted { $0.loggedAt > $1.loggedAt }
     }
 }

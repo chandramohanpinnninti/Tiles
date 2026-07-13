@@ -4,7 +4,10 @@
 "home.empty.subtitle" = "Type \"track my water\" below to create your first tile";
 
 // MARK: - Chat
-"chat.placeholder" = "Track, log, or ask anything…";
+"chat.placeholder" = "Log, build, or ask…";
+"chat.voice.start" = "Start voice input";
+"chat.voice.stop" = "Stop voice input";
+"chat.action.send" = "Send";
 
 // MARK: - Tile card
 "tile.unit.format" = "%@ %@";
@@ -23,6 +26,20 @@
 "entry.action.cancel" = "Cancel";
 "entry.action.save" = "Save";
 
+// MARK: - Exercise entry sheet
+"exercise.section.exercises" = "Exercises";
+"exercise.entry.add" = "Add Exercise";
+"exercise.entry.addSet" = "Add Set";
+"exercise.entry.totalVolume" = "Total Volume";
+"exercise.field.name" = "Exercise name";
+"exercise.field.reps" = "reps";
+
+// MARK: - Workout detail
+"detail.workout.sessions" = "SESSIONS";
+"detail.workout.volume" = "volume";
+"detail.workout.exercise.singular" = "1 exercise";
+"detail.workout.exercise.plural" = "%d exercises";
+
 // MARK: - Detail view
 "detail.section.insights" = "AI Insights";
 "detail.section.history" = "Recent entries";
@@ -32,6 +49,13 @@
 "detail.range.1y" = "1Y";
 "detail.empty.history" = "No entries yet";
 "detail.action.log" = "Log";
+
+// MARK: - Tile editing
+"common.done" = "Done";
+"common.cancel" = "Cancel";
+"tile.action.delete" = "Delete";
+"tile.delete.title" = "Delete tile?";
+"tile.delete.message" = "This removes “%@” and all its logged entries.";
 
 // MARK: - Errors
 "error.title" = "Something went wrong";

@@ -3,10 +3,13 @@ import SwiftData
 
 @main
 struct TilesApp: App {
+    @State private var storage = StorageService()
+
     var body: some Scene {
         WindowGroup {
             HomeView()
+                .environment(storage)
         }
-        .modelContainer(for: [Tile.self, TileEntry.self])
+        .modelContainer(storage.container)
     }
 }

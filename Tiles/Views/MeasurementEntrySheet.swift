@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct MeasurementEntrySheet: View {
-    let tile: Tile
+    let tile: Tracker
     let onSave: (Double, String?) -> Void
     let onCancel: () -> Void
 

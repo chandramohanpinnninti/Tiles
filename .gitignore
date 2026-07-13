@@ -1,0 +1,19 @@
+# Secrets — never commit real API keys (use Secrets.example.swift as a template)
+Secrets.swift
+**/Secrets.swift
+
+# macOS
+.DS_Store
+
+# Xcode
+xcuserdata/
+*.xcuserstate
+*.xcscmblueprint
+*.xccheckout
+DerivedData/
+build/
+*.moved-aside
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
